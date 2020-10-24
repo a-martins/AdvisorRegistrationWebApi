@@ -4,11 +4,11 @@ using System;
 
 namespace AdvisorRegistrationWebApi.Services
 {
-    public class AdvisorDbService : IAdvisorDbService
+    public class AdvisorService : IAdvisorService
     {
         public IAdvisorRepository AdvisorRepository { get; }
 
-        public AdvisorDbService(IAdvisorRepository advisorRepository)
+        public AdvisorService(IAdvisorRepository advisorRepository)
         {
             AdvisorRepository = advisorRepository ?? throw new ArgumentNullException(nameof(advisorRepository));
         }
