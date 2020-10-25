@@ -18,9 +18,5 @@ namespace AdvisorRegistrationWebApi.Models
         public string mobile { get; set; }
 
         public int registryNumber { get; set; }
-
-        public int memberSince { get; set; }
-
-        public bool status { get; set; }
     }
 }
