@@ -1,4 +1,8 @@
 using AdvisorRegistrationWebApi.Models.Contexts;
+using AdvisorRegistrationWebApi.Repositories;
+using AdvisorRegistrationWebApi.Repositories.Interface;
+using AdvisorRegistrationWebApi.Services;
+using AdvisorRegistrationWebApi.Services.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +27,9 @@ namespace AdvisorRegistrationWebApi
 
             services.AddDbContext<AdvisorDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DevConnection")));
+
+            services.AddScoped<IAdvisorRepository, AdvisorRepository>();
+            services.AddScoped<IAdvisorService, AdvisorService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
