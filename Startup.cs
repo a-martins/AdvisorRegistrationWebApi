@@ -28,12 +28,18 @@ namespace AdvisorRegistrationWebApi
             services.AddDbContext<AdvisorDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DevConnection")));
 
+            services.AddCors();
+
             services.AddScoped<IAdvisorRepository, AdvisorRepository>();
             services.AddScoped<IAdvisorService, AdvisorService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseCors(options => options.WithOrigins("http://localhost:3000")
+                .AllowAnyHeader()
+                .AllowAnyMethod());
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
