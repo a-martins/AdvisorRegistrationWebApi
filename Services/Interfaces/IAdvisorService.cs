@@ -1,7 +1,7 @@
 ﻿
 namespace AdvisorRegistrationWebApi.Services.Interfaces
 {
-    interface IAdvisorService
+    public interface IAdvisorService
     {
         bool AdvisorExists(int id);
     }
