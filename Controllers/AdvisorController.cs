@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using AdvisorRegistrationWebApi.Models;
-using AdvisorRegistrationWebApi.Models.Contexts;
+using AdvisorRegistrationWebApi.Repositories.Interface;
+using AdvisorRegistrationWebApi.Services.Interfaces;
 
 namespace AdvisorRegistrationWebApi.Controllers
 {
@@ -12,78 +11,63 @@ namespace AdvisorRegistrationWebApi.Controllers
     [ApiController]
     public class AdvisorController : ControllerBase
     {
-        private readonly AdvisorDbContext _context;
+        public IAdvisorRepository AdvisorRepository { get; }
+        public IAdvisorService AdvisorService { get; }
 
-        public AdvisorController(AdvisorDbContext context)
+        public AdvisorController(IAdvisorRepository advisorRepository,
+            IAdvisorService advisorService)
         {
-            _context = context;
+            AdvisorRepository = advisorRepository ?? throw new System.ArgumentNullException(nameof(advisorRepository));
+            AdvisorService = advisorService ?? throw new System.ArgumentNullException(nameof(advisorService));
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Advisor>>> GetAdvisors()
         {
-            return await _context.Advisors.ToListAsync();
+            var result = await AdvisorRepository.GetAdvisorsAsync();
+
+            return Ok(result);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Advisor>> GetAdvisor(int id)
         {
-            var advisor = await _context.Advisors.FindAsync(id);
+            var advisor = await AdvisorRepository.GetAdvisorByIDAsync(id);
 
             if (advisor == null) return NotFound();
 
-            return advisor;
+            return Ok(advisor);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutAdvisor(int id, Advisor advisor)
+        public async Task<ActionResult<Advisor>> PutAdvisor(int id, Advisor advisor)
         {
-            if (id != advisor.id) return BadRequest();
+            if (!AdvisorService.AdvisorExists(id)) return NotFound();
 
-            _context.Entry(advisor).State = EntityState.Modified;
+            AdvisorRepository.UpdateAdvisor(advisor);
+            await AdvisorRepository.SaveAsync();
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!AdvisorExists(id))
-                    return NotFound();
-                else
-                    throw;
-            }
-
-            return NoContent();
+            return Ok(advisor);
         }
 
         [HttpPost]
         public async Task<ActionResult<Advisor>> PostAdvisor(Advisor advisor)
         {
-            _context.Advisors.Add(advisor);
-            await _context.SaveChangesAsync();
+            AdvisorRepository.InsertAdvisor(advisor);
+            await AdvisorRepository.SaveAsync();
 
-            return CreatedAtAction("GetAdvisor", new { id = advisor.id }, advisor);
+            return CreatedAtAction("GetAdvisor", new { advisor.id }, advisor);
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult<Advisor>> DeleteAdvisor(int id)
         {
-            var advisor = await _context.Advisors.FindAsync(id);
-            if (advisor == null)
-            {
-                return NotFound();
-            }
+            if (!AdvisorService.AdvisorExists(id)) return NotFound();
 
-            _context.Advisors.Remove(advisor);
-            await _context.SaveChangesAsync();
+            AdvisorRepository.DeleteAdvisor(id);
+            await AdvisorRepository.SaveAsync();
 
-            return advisor;
-        }
-
-        private bool AdvisorExists(int id)
-        {
-            return _context.Advisors.Any(e => e.id == id);
+            return Ok();
         }
     }
 }
