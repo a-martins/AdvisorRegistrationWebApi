@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using AdvisorRegistrationWebApi.Models;
 using AdvisorRegistrationWebApi.Repositories.Interface;
-using AdvisorRegistrationWebApi.Services.Interfaces;
 
 namespace AdvisorRegistrationWebApi.Controllers
 {
@@ -12,13 +11,10 @@ namespace AdvisorRegistrationWebApi.Controllers
     public class AdvisorController : ControllerBase
     {
         public IAdvisorRepository AdvisorRepository { get; }
-        public IAdvisorService AdvisorService { get; }
 
-        public AdvisorController(IAdvisorRepository advisorRepository,
-            IAdvisorService advisorService)
+        public AdvisorController(IAdvisorRepository advisorRepository)
         {
             AdvisorRepository = advisorRepository ?? throw new System.ArgumentNullException(nameof(advisorRepository));
-            AdvisorService = advisorService ?? throw new System.ArgumentNullException(nameof(advisorService));
         }
 
         [HttpGet]
@@ -42,7 +38,7 @@ namespace AdvisorRegistrationWebApi.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<Advisor>> PutAdvisor(int id, Advisor advisor)
         {
-            if (!AdvisorService.AdvisorExists(id)) return NotFound();
+            if (!AdvisorRepository.Any(id)) return NotFound();
 
             AdvisorRepository.UpdateAdvisor(advisor);
             await AdvisorRepository.SaveAsync();
@@ -62,7 +58,7 @@ namespace AdvisorRegistrationWebApi.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Advisor>> DeleteAdvisor(int id)
         {
-            if (!AdvisorService.AdvisorExists(id)) return NotFound();
+            if (!AdvisorRepository.Any(id)) return NotFound();
 
             AdvisorRepository.DeleteAdvisor(id);
             await AdvisorRepository.SaveAsync();
