@@ -31,7 +31,7 @@ namespace AdvisorRegistrationWebApi.Repositories
 
         public bool Any(int advisorId)
         {
-            return _context.Advisors.Any(e => e.id == advisorId);
+            return _context.Advisors.Any(e => e.Id == advisorId);
         }
 
         public void InsertAdvisor(Advisor advisor)

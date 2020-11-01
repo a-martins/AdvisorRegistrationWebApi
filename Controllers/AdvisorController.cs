@@ -56,7 +56,7 @@ namespace AdvisorRegistrationWebApi.Controllers
             AdvisorRepository.InsertAdvisor(advisor);
             await AdvisorRepository.SaveAsync();
 
-            return CreatedAtAction("GetAdvisor", new { advisor.id }, advisor);
+            return CreatedAtAction("GetAdvisor", new { advisor.Id }, advisor);
         }
 
         [HttpDelete("{id}")]

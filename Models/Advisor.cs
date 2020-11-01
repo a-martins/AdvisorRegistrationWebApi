@@ -6,17 +6,17 @@ namespace AdvisorRegistrationWebApi.Models
     public class Advisor
     {
         [Key]
-        public int id { get; set; }
+        public int Id { get; set; }
 
         [Column(TypeName="nvarchar(100)")]
-        public string fullName { get; set; }
+        public string FullName { get; set; }
 
         [Column(TypeName = "nvarchar(100)")]
-        public string email { get; set; }
+        public string Email { get; set; }
 
         [Column(TypeName = "nvarchar(16)")]
-        public string mobile { get; set; }
+        public string Mobile { get; set; }
 
-        public int registryNumber { get; set; }
+        public int RegistryNumber { get; set; }
     }
 }
